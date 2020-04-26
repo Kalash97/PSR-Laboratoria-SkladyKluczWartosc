@@ -20,5 +20,5 @@ public class Author implements Serializable{
 	private String lastName;
 	
 	@Getter
-	List<Book> books= new ArrayList<Book>();
+	private List<Book> books= new ArrayList<Book>();
 }

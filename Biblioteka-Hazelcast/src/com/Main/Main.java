@@ -1,71 +1,117 @@
 package com.Main;
 
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
-import com.Actions.CreateAuthorAction;
-import com.Actions.DeleteAuthorAction;
+import com.Actions.Action;
+import com.Actions.ExitAction;
+import com.Actions.AuthorActions.CreateAuthorAction;
+import com.Actions.AuthorActions.DeleteAuthorAction;
+import com.Actions.AuthorActions.ReadAllAuthors;
+import com.Actions.AuthorActions.ReadAuthorByKeyAction;
+import com.Actions.AuthorActions.UpdateAuthorAction;
+import com.Actions.BookActions.CreateBookAction;
+import com.Actions.BookActions.DeleteBookAction;
+import com.Actions.BookActions.ReadAllBooksAction;
+import com.Actions.BookActions.ReadBookByKeyAction;
+import com.Actions.BookActions.UpdateBookAction;
+import com.Actions.ReaderActions.CreateReaderAction;
+import com.Actions.ReaderActions.DeleteReaderAction;
+import com.Actions.ReaderActions.ReadAllReadersAction;
+import com.Actions.ReaderActions.ReadReaderByKeyAction;
+import com.Actions.ReaderActions.UpdateReaderAction;
 import com.Entities.Author;
-import com.HazelcastInit.HazelcastOperations;
+import com.Entities.Book;
+import com.Entities.Reader;
+import com.HazelcastInit.HazelcastProvider;
+import com.View.ConsoleView;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.map.IMap;
 
 public class Main {
 
+	private static List<Action> actions;
+	private static ConsoleView cv;
+	
 	public static void main(String[] args) {
 
-		HazelcastInstance instance = HazelcastOperations.createHazelcastInstance();
+		init();
 		
-		IMap<Long, Author> authors = instance.getMap("authors");
-		
-		CreateAuthorAction caa = new CreateAuthorAction(authors, "Zdzichu", "Sztacheta", (long) 1);
-		caa.launch();
-		
-		CreateAuthorAction caa1 = new CreateAuthorAction(authors, "maniek", "boczek", (long) 2);
-		caa1.launch();
-		
-		DeleteAuthorAction daa = new DeleteAuthorAction(authors, (long) 1);
-		daa.launch();
-		
-		Set<Long> keys = authors.localKeySet();
-		for(Long k : keys) {
-			System.out.println("Autor o kluczu: "+k);
-			System.out.println("Imiê: "+authors.get(k).getName());
-			System.out.println("Nazwisko: "+authors.get(k).getLastName());
-			System.out.println("");
+		while (true) {
+			cv.print("Lista dostêpnych akcji:");
+			showActions();
+			cv.print("");
+			cv.print("Podaj akcjê");
+			runAction(cv.read());
 		}
+
+	}
+	
+	public static void init() {
+		HazelcastInstance instance = HazelcastProvider.getInstance();
+		IMap<Long, Author> authors = instance.getMap("authors");
+		IMap<Long, Book> books = instance.getMap("books");
+		IMap<Long, Reader> readers = instance.getMap("readers");
 		
-//		TEST
-//		HazelcastInstance client = Hazelcast.newHazelcastInstance();
-//		
-//		IMap<Long, RandomEntity> map = client.getMap("Test");
-//		IMap<Long, RandomEntity> map3333 = client.getMap("iuy");
-//		
-//		RandomEntity rnd = new RandomEntity();
-//		rnd.setField1("someEntity");
-//		rnd.setField2(1);
-//		
-//		RandomEntity rnd2 = new RandomEntity();
-//		rnd2.setField1("someDifrentEntity");
-//		rnd2.setField2(1);
-//		
-//		map.put((long) 1, rnd);
-//		map3333.put((long) 2, rnd2);
-//		
-////		for(Entry<Long, RandomEntity> e : map.entrySet()) {
-////			System.out.println(e.getKey()+" -> " + e.getValue());
-////		}
-//		
-//		Set<Long> keys = map.localKeySet();
-//		Set<Long> keys2 = map3333.localKeySet();
-//		for(Long k : keys) {
-//			System.out.println(k+"->"+map.get(k)+" Field1:"+map.get(k).getField1()+ " Field2:"+map.get(k).getField2());
-//		}
-//		
-//		for(Long k : keys2) {
-//			System.out.println(k+"->"+map3333.get(k)+" Field1:"+map3333.get(k).getField1()+ " Field2:"+map3333.get(k).getField2());
-//		}
-//		
-		System.exit(1);
+		actions = new ArrayList<Action>();		
+		cv = new ConsoleView();
+		
+		//Test data
+		Author a = new Author();
+		a.setName("Maniek");
+		a.setLastName("B¹k");
+		authors.put((long) 9, a);
+		
+		Book b = new Book();
+		b.setTitle("Random title");
+		b.setIsbn("1111-11-1111-111");
+		b.setYearOfPublishment(1972);
+		books.put((long) 9, b);
+		
+		Reader r = new Reader();
+		r.setName("Krzysztof");
+		r.setLastName("Jarzyna ze Szczecina");
+		readers.put((long) 9, r);
+		
+		actions.add(new CreateAuthorAction(authors, cv));
+		actions.add(new DeleteAuthorAction(authors, cv));
+		actions.add(new UpdateAuthorAction(authors, cv));
+		actions.add(new ReadAllAuthors(authors, cv));
+		actions.add(new ReadAuthorByKeyAction(authors, cv));
+		
+		actions.add(new CreateBookAction(books, cv));
+		actions.add(new DeleteBookAction(books, cv));
+		actions.add(new UpdateBookAction(books, cv));
+		actions.add(new ReadAllBooksAction(books, cv));
+		actions.add(new ReadBookByKeyAction(books, cv));
+		
+		actions.add(new CreateReaderAction(readers, cv));
+		actions.add(new DeleteReaderAction(readers, cv));
+		actions.add(new UpdateReaderAction(readers, cv));
+		actions.add(new ReadAllReadersAction(readers, cv));
+		actions.add(new ReadReaderByKeyAction(readers, cv));
+		
+		actions.add(new ExitAction());
+	}
+	
+	private static void runAction(String name) {
+		for (Action a : actions) {
+			if (name.equals(a.getName())) {
+				launchAction(a);
+				return;
+			}
+		}
+		cv.print("Nie ma takiej akcji: " + name);
+	}
+	
+	private static void launchAction(Action a) {
+			a.launch();
+	}
+	
+	private static void showActions() {
+		for (Action a : actions) {
+			cv.print(" " + a.getName());
+		}
 	}
 
 }

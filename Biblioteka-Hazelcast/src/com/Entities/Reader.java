@@ -20,6 +20,6 @@ public class Reader implements Serializable{
 	private String lastName;
 	
 	@Getter
-	private List<Borrow> borrows = new ArrayList<Borrow>();
+	private List<Book> books = new ArrayList<Book>();
 
 }
