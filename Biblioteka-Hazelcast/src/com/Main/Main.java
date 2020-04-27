@@ -20,6 +20,10 @@ import com.Actions.ReaderActions.DeleteReaderAction;
 import com.Actions.ReaderActions.ReadAllReadersAction;
 import com.Actions.ReaderActions.ReadReaderByKeyAction;
 import com.Actions.ReaderActions.UpdateReaderAction;
+import com.ActionsAuthorBookActions.AssignAuthorToBookAction;
+import com.ActionsAuthorBookActions.RemoveAuthorFromBookAction;
+import com.ActionsBookReaderActions.AssignBookToReaderAction;
+import com.ActionsBookReaderActions.RemoveBookFromReaderAction;
 import com.Entities.Author;
 import com.Entities.Book;
 import com.Entities.Reader;
@@ -90,6 +94,11 @@ public class Main {
 		actions.add(new UpdateReaderAction(readers, cv));
 		actions.add(new ReadAllReadersAction(readers, cv));
 		actions.add(new ReadReaderByKeyAction(readers, cv));
+		
+		actions.add(new AssignAuthorToBookAction(authors, books, cv));
+		actions.add(new AssignBookToReaderAction(readers, books, cv));
+		actions.add(new RemoveBookFromReaderAction(readers, books, cv));
+		actions.add(new RemoveAuthorFromBookAction(authors, books, cv));
 		
 		actions.add(new ExitAction());
 	}

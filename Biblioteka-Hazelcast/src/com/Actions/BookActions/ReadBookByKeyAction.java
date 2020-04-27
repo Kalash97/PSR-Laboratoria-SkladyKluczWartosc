@@ -1,6 +1,7 @@
 package com.Actions.BookActions;
 
 import com.Actions.Action;
+import com.Entities.Author;
 import com.Entities.Book;
 import com.Utils.ValidUtil;
 import com.View.ConsoleView;
@@ -28,6 +29,9 @@ public class ReadBookByKeyAction implements Action{
 		cv.print("Tytu³: "+b.getTitle());
 		cv.print("ISBN: "+ b.getIsbn());
 		cv.print("Rok wydania: "+ b.getYearOfPublishment());
+		for(Author a : b.getAuthors()) {
+			cv.print("Autor:: Imiê: "+a.getName()+" Nazwisko: "+a.getLastName());
+		}
 		cv.print("");
 	}
 

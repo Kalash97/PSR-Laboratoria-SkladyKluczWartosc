@@ -1,4 +1,4 @@
-package com.Actions.AuthorActions;
+package com.ActionsAuthorBookActions;
 
 import com.Actions.Action;
 import com.Entities.Author;
@@ -10,29 +10,39 @@ import com.hazelcast.map.IMap;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public class ReadAuthorByKeyAction implements Action{
+public class AssignAuthorToBookAction implements Action{
 
 	private IMap<Long, Author> authors;
+	private IMap<Long, Book> books;
 	private ConsoleView view;
 	
 	@Override
 	public void launch() {
+		view.print("Podaj klucz autora");
 		String line = getValidKey();
-		Long key = Long.parseLong(line);
+		Long authorKey = Long.parseLong(line);
 		
-		Author a = authors.get(key);
+		Author a = authors.get(authorKey);
 		if (a == null) {
 			view.print("Nie ma takiego autora!");
 			return;
 		}
 		
-		view.print("Imiê: "+a.getName());
-		view.print("Nazwisko: "+a.getLastName());
-		view.print("Ksi¹¿ki autora:");
-		for(Book b : a.getBooks()) {
-			view.print("Tytu³: "+b.getTitle());
+		view.print("Podaj klucz ksi¹zki");
+		line = getValidKey();
+		Long bookKey = Long.parseLong(line);
+		
+		Book b = books.get(bookKey);
+		if (b == null) {
+			view.print("Nie ma takiej ksi¹zki!");
+			return;
 		}
-		view.print("");
+		
+		b.getAuthors().add(a);
+		a.getBooks().add(b);
+		
+		authors.put(authorKey, a);
+		books.put(bookKey, b);
 	}
 
 	private String getValidKey() {
@@ -46,7 +56,7 @@ public class ReadAuthorByKeyAction implements Action{
 	
 	@Override
 	public String getName() {
-		return "ReadAuthorByKey";
+		return "AssignAuthorToBook";
 	}
 
 }

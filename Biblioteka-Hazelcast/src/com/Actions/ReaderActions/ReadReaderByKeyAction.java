@@ -1,6 +1,7 @@
 package com.Actions.ReaderActions;
 
 import com.Actions.Action;
+import com.Entities.Book;
 import com.Entities.Reader;
 import com.Utils.ValidUtil;
 import com.View.ConsoleView;
@@ -27,6 +28,9 @@ public class ReadReaderByKeyAction implements Action{
 		
 		view.print("Imiê: "+r.getName());
 		view.print("Nazwisko: "+r.getLastName());
+		for(Book b : r.getBooks()) {
+			view.print("Tytu³: "+b.getTitle());
+		}
 		view.print("");
 	}
 
