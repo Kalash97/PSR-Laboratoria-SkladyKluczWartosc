@@ -1,5 +1,6 @@
-package com.Actions;
+package com.Actions.AuthorActions;
 
+import com.Actions.Action;
 import com.Entities.Author;
 import com.View.ConsoleView;
 
