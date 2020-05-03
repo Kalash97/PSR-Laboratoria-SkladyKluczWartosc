@@ -14,6 +14,7 @@ import com.Actions.BookActions.CreateBookAction;
 import com.Actions.BookActions.DeleteBookAction;
 import com.Actions.BookActions.ReadAllBooksAction;
 import com.Actions.BookActions.ReadBookByKeyAction;
+import com.Actions.BookActions.ReadBookByTitleAction;
 import com.Actions.BookActions.UpdateBookAction;
 import com.Actions.ReaderActions.CreateReaderAction;
 import com.Actions.ReaderActions.DeleteReaderAction;
@@ -88,6 +89,7 @@ public class Main {
 		actions.add(new UpdateBookAction(books, cv));
 		actions.add(new ReadAllBooksAction(books, cv));
 		actions.add(new ReadBookByKeyAction(books, cv));
+		actions.add(new ReadBookByTitleAction(books, cv));
 		
 		actions.add(new CreateReaderAction(readers, cv));
 		actions.add(new DeleteReaderAction(readers, cv));
