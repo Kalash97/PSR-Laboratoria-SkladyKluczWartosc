@@ -1,5 +1,7 @@
 package com.ActionsAuthorBookActions;
 
+import java.util.Iterator;
+
 import com.Actions.Action;
 import com.Entities.Author;
 import com.Entities.Book;
@@ -37,14 +39,28 @@ public class RemoveAuthorFromBookAction implements Action{
 			view.print("Nie ma takiej ksi¹zki!");
 			return;
 		}
-		
-		for(Book book : a.getBooks()) {
-			if(book.getTitle().equals(b.getTitle())) {
-				a.getBooks().remove(book);
-				b.getAuthors().remove(a);
-				break;
+
+		for(Iterator<Author> itA = b.getAuthors().iterator();itA.hasNext();) {
+			Author next = itA.next();
+			if(next.getName().equals(a.getName()) && next.getLastName().equals(a.getLastName())) {
+				itA.remove();
 			}
 		}
+		
+		for(Iterator<Book> itB = a.getBooks().iterator();itB.hasNext();) {
+			Book next = itB.next();
+			if(next.getTitle().equals(b.getTitle())) {
+				itB.remove();
+			}
+		}
+				
+//		for(Book book : a.getBooks()) {
+//			if(book.getTitle().equals(b.getTitle())) {
+//				a.getBooks().remove(book);
+//				b.getAuthors().remove(a);
+//				break;
+//			}
+//		}
 		
 		authors.put(authorKey, a);
 		books.put(bookKey, b);

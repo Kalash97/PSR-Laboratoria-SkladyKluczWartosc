@@ -1,4 +1,4 @@
-package com.Actions.ReaderActions;
+package com.Actions.ReaderBookActions;
 
 import com.Actions.Action;
 import com.Entities.Book;
@@ -9,20 +9,21 @@ import lombok.AllArgsConstructor;
 import net.spy.memcached.MemcachedClient;
 
 @AllArgsConstructor
-public class ReadReaderByKeyAction implements Action{
+public class AssignReaderToBookAction implements Action{
 
 	private MemcachedClient client;
 	private ConsoleView cv;
 	
 	@Override
 	public void launch() {
+		
 		cv.print("Podaj klucz czytelnika");
-		String key = cv.read();
+		String readerKey = cv.read();
 		
 		Reader r;
 		
 		try {
-			r = (Reader) client.get(key);
+			r = (Reader) client.get(readerKey);
 		} catch (ClassCastException | IllegalArgumentException e) {
 			cv.print("Nie ma czytelnika o takim kluczu");
 			return;
@@ -33,17 +34,32 @@ public class ReadReaderByKeyAction implements Action{
 			return;
 		}
 		
-		cv.print("Imiê: "+r.getName());
-		cv.print("Nazwisko: "+r.getLastName());
-		for(Book b : r.getBooks()) {
-			cv.print("Tytu³: "+b.getTitle());
+		cv.print("Podaj klucz ksi¹¿ki");
+		String bookKey = cv.read();
+		
+		Book b;
+		
+		try {
+			b = (Book) client.get(bookKey);
+		} catch (ClassCastException | IllegalArgumentException e) {
+			cv.print("Nie ma ksi¹¿ki o takim kluczu");
+			return;
 		}
-		cv.print("");
+		
+		if(b==null) {
+			cv.print("Nie ma ksi¹¿ki o takim kluczu");
+			return;
+		}
+		
+		r.getBooks().add(b);
+		
+		client.set(readerKey, 2000, r);
+		
 	}
 
 	@Override
 	public String getName() {
-		return "ReadReaderByKey";
+		return "AssignReaderToBook";
 	}
 
 }

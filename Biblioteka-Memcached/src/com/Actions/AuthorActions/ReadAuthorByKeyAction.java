@@ -2,6 +2,7 @@ package com.Actions.AuthorActions;
 
 import com.Actions.Action;
 import com.Entities.Author;
+import com.Entities.Book;
 import com.View.ConsoleView;
 
 import lombok.AllArgsConstructor;
@@ -34,6 +35,10 @@ public class ReadAuthorByKeyAction implements Action{
 		
 		cv.print("Imiê: "+a.getName());
 		cv.print("Nazwisko: "+a.getLastName());
+		cv.print("Ksi¹¿ki:: ");
+		for(Book b : a.getBooks()) {
+			cv.print("Tytu³: "+b.getTitle());
+		}
 		cv.print("");
 	}
 

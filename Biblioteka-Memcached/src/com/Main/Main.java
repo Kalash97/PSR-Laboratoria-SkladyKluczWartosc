@@ -9,6 +9,8 @@ import com.Actions.AuthorActions.CreateAuthorAction;
 import com.Actions.AuthorActions.DeleteAuthorAction;
 import com.Actions.AuthorActions.ReadAuthorByKeyAction;
 import com.Actions.AuthorActions.UpdateAuthorAction;
+import com.Actions.AuthorBookActions.AssignAuthorToBookAction;
+import com.Actions.AuthorBookActions.RemoveAuthorFromBookAction;
 import com.Actions.BookActions.CreateBookAction;
 import com.Actions.BookActions.DeleteBookAction;
 import com.Actions.BookActions.ReadBookByKeyAction;
@@ -17,7 +19,11 @@ import com.Actions.ReaderActions.CreateReaderAction;
 import com.Actions.ReaderActions.DeleteReaderAction;
 import com.Actions.ReaderActions.ReadReaderByKeyAction;
 import com.Actions.ReaderActions.UpdateReaderAction;
+import com.Actions.ReaderBookActions.AssignReaderToBookAction;
+import com.Actions.ReaderBookActions.RemoveBookFromReaderAction;
+import com.Entities.Author;
 import com.Entities.Book;
+import com.Entities.Reader;
 import com.MemcachedInit.MemcachedProvider;
 import com.View.ConsoleView;
 
@@ -54,6 +60,16 @@ public class Main {
 		b.setYearOfPublishment(2020);
 		client.set("book1", 2000, b);
 		
+		Author a = new Author();
+		a.setName("ExName");
+		a.setLastName("ExLastName");
+		client.set("author1", 2000, a);
+		
+		Reader r = new Reader();
+		r.setName("TestReader");
+		r.setLastName("TestReader");
+		client.set("reader1", 2000, r);
+		
 		actions.add(new CreateAuthorAction(client, cv));
 		actions.add(new ReadAuthorByKeyAction(client, cv));
 		actions.add(new DeleteAuthorAction(client, cv));
@@ -68,6 +84,12 @@ public class Main {
 		actions.add(new ReadReaderByKeyAction(client, cv));
 		actions.add(new DeleteReaderAction(client, cv));
 		actions.add(new UpdateReaderAction(client, cv));
+		
+		actions.add(new AssignAuthorToBookAction(client, cv));
+		actions.add(new RemoveAuthorFromBookAction(client, cv));
+		
+		actions.add(new AssignReaderToBookAction(client, cv));
+		actions.add(new RemoveBookFromReaderAction(client, cv));
 		
 		actions.add(new ExitAction());
 	}
